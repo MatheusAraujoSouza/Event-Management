@@ -1,5 +1,5 @@
-using Management.Api.Entities.Configurations;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace Management.Api.Controllers
@@ -10,13 +10,13 @@ namespace Management.Api.Controllers
     {
         private readonly ILogger<ManagementController> _logger;
         private readonly IConfiguration _configuration;
-        private readonly AppSettings _appSettings;
+        private readonly IConfigurationRoot _configurationRoot;
 
-        public ManagementController(ILogger<ManagementController> logger, IConfiguration configuration, AppSettings appSettings)
+        public ManagementController(ILogger<ManagementController> logger, IConfiguration configuration, IConfigurationRoot configurationRoot)
         {
             _logger = logger;
             _configuration = configuration;
-            _appSettings = appSettings;
+            _configurationRoot = configurationRoot;
         }
 
         [HttpGet]
@@ -24,20 +24,26 @@ namespace Management.Api.Controllers
         {
             try
             {
-                // Access properties from AppSettings
-                //var allowedHosts = _appSettings.AllowedHosts;
-                //var swaggerEnabled = _appSettings.Swagger.Enable;
-                //var serverPort = _appSettings.Server.Port;
+                var configurationKeys = _configuration.AsEnumerable().Select(x => x.Key);
+                var configurationKeysRoot = _configurationRoot.AsEnumerable().Select(x => x.Key);
 
+                // Access properties from IConfiguration
+                var allowedHosts = _configuration["Logging:LogLevel:Default"];
+                var allowedHost2s = _configurationRoot["Logging:LogLevel:Default"];
+
+
+
+
+                // Your controller logic
                 // ...
+
+                return Ok("Hello World");
             }
             catch (Exception ex)
             {
                 _logger.LogError(ex, "Error occurred while getting data");
                 return StatusCode(500, "An error occurred");
             }
-
-            return Ok("Hello World");
         }
     }
 }
